@@ -32,6 +32,17 @@ const enemyTypes = {
     }
 }
 
+function getCenter(object){
+    return{
+        x: object.x + object.width / 2,
+        y: object.y + object.height / 2,
+    }
+}
+
+function getRadius(object){
+    return Math.max(object.width, object.height) / 2;
+}
+
 function getRandomEnemyType(){
     const typeNames = Object.keys(enemyTypes);
     const randomIndex = Math.floor(Math.random() * typeNames.length);
@@ -50,15 +61,15 @@ function spawnEnemy(canvas) {
 
     if (side === 0) {
         x = Math.random() * canvas.width;
-        y = -size;
+        y = -type.height;
     } else if (side === 1) {
-        x = canvas.width + size;
+        x = canvas.width + type.width;
         y = Math.random() * canvas.height;
     } else if (side === 2) {
         x = Math.random() * canvas.width;
-        y = canvas.height + size;
+        y = canvas.height + type.height;
     } else {
-        x = -size;
+        x = -type.width;
         y = Math.random() * canvas.height;
     }
 
@@ -85,26 +96,99 @@ export function updateEnemySpawn(canvas) {
 }
 
 export function updateEnemies(player) {
+    const playerCenter = getCenter(player);
+
     for (let i = 0; i < enemies.length; i++) {
         const enemy = enemies[i];
+        const enemyCenter = getCenter(enemy);
 
-        const enemyCenterX = enemy.x + (enemy.width / 2);
-        const enemyCenterY = enemy.y + (enemy.height / 2);
+        const distanceX = playerCenter.x - enemyCenter.x;
+        const distanceY = playerCenter.y - enemyCenter.y;
 
-        const playerCenterX = player.x + (player.width / 2);
-        const playerCenterY = player.y + (player.height / 2);
-
-        const distanceX = playerCenterX - enemyCenterX;
-        const distanceY = playerCenterY - enemyCenterY;
-
-        const distance = Math.sqrt(
-            (distanceX * distanceX) + 
-            (distanceY * distanceY)
-        );
+        const distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
 
         if (distance > 0) {
             enemy.x += (distanceX / distance) * enemy.speed;
             enemy.y += (distanceY / distance) * enemy.speed;
+        }
+    }
+    
+    separateEnemiesFromPlayer(player);
+    separateEnemiesFromEachOther();
+}
+
+function separateEnemiesFromPlayer(player){
+    const playerCenter = getCenter(player);
+    const playerRadius = getRadius(player);
+
+    for (let i = 0; i < enemies.length; i++) {
+        const enemy = enemies[i];
+
+        const enemyCenter = getCenter(enemy);
+        const enemyRadius = getRadius(enemy);
+
+        let distanceX = enemyCenter.x - playerCenter.x;
+        let distanceY = enemyCenter.y - playerCenter.y;
+
+        let distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
+
+        const minimumDistance = playerRadius + enemyRadius;
+
+        if (distance < minimumDistance) {
+            if (distance === 0){
+                distanceX = 1;
+                distanceY = 0;
+                distance = 1;
+            }
+
+            const overlap = minimumDistance - distance;
+
+            const pushX = (distanceX / distance) * overlap;
+            const pushY = (distanceY / distance) * overlap;
+
+            enemy.x += pushX;
+            enemy.y += pushY;
+        }
+    }
+}
+
+function separateEnemiesFromEachOther() {
+    for (let i = 0; i < enemies.length; i++) {
+        for (let j = i + 1; j < enemies.length; j++) {
+            const enemyA = enemies[i];
+            const enemyB = enemies[j];
+
+            const centerA = getCenter(enemyA);
+            const centerB = getCenter(enemyB);
+
+            const radiusA = getRadius(enemyA);
+            const radiusB = getRadius(enemyB);
+
+            let distanceX = centerB.x - centerA.x;
+            let distanceY = centerB.y - centerA.y;
+
+            let distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
+
+            const minimumDistance = radiusA + radiusB;
+
+            if (distance < minimumDistance) {
+                if (distance === 0) {
+                    distanceX = 1;
+                    distanceY = 0;
+                    distance = 1;
+                }
+
+                const overlap = minimumDistance - distance;
+
+                const pushX = (distanceX / distance) * (overlap / 2);
+                const pushY = (distanceY / distance) * (overlap / 2);
+
+                enemyA.x -= pushX;
+                enemyA.y -= pushY;
+
+                enemyB.x += pushX;
+                enemyB.y += pushY;
+            }
         }
     }
 }
