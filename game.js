@@ -12,6 +12,11 @@ const player = {
     speed: 1
 };
 
+const enemies = [];
+
+let enemySpawnTimer = 0;
+let enemySpawnInterval = 120;
+
 const keys = {
     up: false,
     down: false,
@@ -45,8 +50,71 @@ function updatePlayer(){
     if (player.y + player.height > canvas.height) player.y = canvas.height - player.height; 
 }
 
+function spawnEnemy(){
+    let size = 30;
+    let speed = 0.5;
+    let x;
+    let y;
+
+    const side = Math.floor(Math.random() * 4);
+    if (side === 0) {
+        x = Math.random() * canvas.width;
+        y = -size;
+    } else if (side === 1) {
+        x = canvas.width + size;
+        y = Math.random() * canvas.height;
+    } else if (side === 2) {
+        x = Math.random() * canvas.width;
+        y = canvas.height + size;
+    } else {
+        x = -size;
+        y = Math.random() * canvas.height;
+    }
+
+    enemies.push({
+        x: x,
+        y: y,
+        width: size,
+        height: size,
+        speed: speed
+    });
+}
+
+function updateEnemySpawn(){
+    enemySpawnTimer++;
+    
+    if (enemySpawnTimer >= enemySpawnInterval) {
+        spawnEnemy();
+        enemySpawnTimer = 0;
+    }
+}
+
+function updateEnemies(){
+    for (let i = 0; i < enemies.length; i++) {
+        const enemy = enemies[i];
+
+        const enemyCenterX = enemy.x + (enemy.width / 2);
+        const enemyCenterY = enemy.y + (enemy.height / 2);
+
+        const playerCenterX = player.x + (player.width / 2);
+        const playerCenterY = player.y + (player.height / 2);
+
+        const distanceX = playerCenterX - enemyCenterX;
+        const distanceY = playerCenterY - enemyCenterY;
+
+        const distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
+
+        if (distance > 0) {
+            enemy.x += (distanceX / distance) * enemy.speed;
+            enemy.y += (distanceY / distance) * enemy.speed;
+        }
+    }
+}
+
 function update(){
     updatePlayer();
+    updateEnemySpawn();
+    updateEnemies();
 }
 
 function drawPlayer(){
@@ -54,8 +122,19 @@ function drawPlayer(){
     ctx.fillRect(player.x, player.y, player.width, player.height);
 }
 
+function drawEnemies(){
+    ctx.fillStyle = "red";
+    
+    for (let i = 0; i < enemies.length; i++){
+        const enemy = enemies[i];
+
+        ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+    }
+}
+
 function draw(){
     drawPlayer();
+    drawEnemies();
 }
 
 function gameLoop(){
