@@ -13,24 +13,24 @@ export function createPlayer(canvas) {
         maxHealth: 100,
         health: 100,
         armor: 0,
-        regen: 0.1,
+        regen: 2,
 
         lastDirectionX: 1,
         lastDirectionY:0,
 
-        shootCooldown: 0,
-        shootInterval: 0.5,
+        fireCooldown: 0,
+        fireInterval: 0.5,
         bulletSpeed: 5,
         damage: 10,
 
-        XPgrowth: 1,
+        growth: 1,
         level: 1,
         xp: 0,
-        xpToNextlevel: 5,
+        xpToNextLevel: 5,
 
         selectedUpgrades: [],
         upgradeLevels: {},
-        maxUpgrades: 4,
+        maxUpgradeSlots: 4,
 
         weaponLevel: 1,
 
