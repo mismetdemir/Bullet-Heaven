@@ -1,0 +1,84 @@
+import { clamp, normalizeVector } from "./utils.js";
+
+export function createPlayer(canvas) {
+    return {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+
+        width: 40,
+        height: 40,
+
+        speed: 100,
+
+        maxHealth: 100,
+        health: 100,
+        armor: 0,
+        regen: 0.1,
+
+        lastDirectionX: 1,
+        lastDirectionY:0,
+
+        shootCooldown: 0,
+        shootInterval: 0.5,
+        bulletSpeed: 5,
+        damage: 10,
+
+        XPgrowth: 1,
+        level: 1,
+        xp: 0,
+        xpToNextlevel: 5,
+
+        selectedUpgrades: [],
+        upgradeLevels: {},
+        maxUpgrades: 4,
+
+        weaponLevel: 1,
+
+        color: "black"
+    };
+}
+
+
+export function updatePlayer(player, keys, canvas, deltaTime) {
+    updatePlayerMovement(player, keys, canvas, deltaTime);
+    updatePlayerRegeneration(player, deltaTime);
+}
+
+function updatePlayerMovement(player, keys, canvas, deltaTime) {
+    let moveX = 0;
+    let moveY = 0;
+
+    if (keys.up) moveY -= 1;
+    if (keys.down) moveY += 1;
+    if (keys.left) moveX -= 1;
+    if (keys.right) moveX += 1;
+
+    const direction = normalizeVector(moveX, moveY);
+
+    player.x += direction.x * player.speed * deltaTime;
+    player.y += direction.y * player.speed * deltaTime;
+
+    if (direction.x !== 0 || direction.y !== 0) {
+        player.lastDirectionX = direction.x;
+        player.lastDirectionY = direction.y;
+    }
+
+    player.x = clamp(player.x, player.width / 2, canvas.width - player.width / 2);
+    player.y = clamp(player.y, player.height / 2, canvas.height - player.height / 2);
+}
+
+function updatePlayerRegeneration(player, deltaTime) {
+    if (player.health < player.maxHealth) {
+        player.health += player.regen * deltaTime;
+    }
+    
+    if (player.health > player.maxHealth) {
+        player.health = player.maxHealth;
+    }
+}
+
+
+export function drawPlayer(ctx, player) {
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
+}

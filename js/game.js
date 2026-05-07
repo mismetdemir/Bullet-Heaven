@@ -17,14 +17,18 @@ function update() {
 }
 
 function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawPlayer(ctx, player);
     drawEnemies(ctx);
 }
 
-function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+let lastTime = 0;
 
-    update();
+function gameLoop(currentTime) {
+    const deltaTime = (currentTime - lastTime) / 1000;
+    lastTime = currentTime;
+
+    update(deltaTime);
     draw();
 
     requestAnimationFrame(gameLoop);
