@@ -1,120 +1,160 @@
+import { normalizeVector, getRadius, getCenter, isColliding } from "./utils.js";
+ 
 export const enemies = [];
 
 let enemySpawnTimer = 0;
-let enemySpawnInterval = 180;
+let enemySpawnInterval = 2;
+let minimumSpawnInterval = 0.5;
+let enemySpawnAcceleration = 0.1;
+let enemySpawnAccelerationInterval = 10;
 
 const enemyTypes = {
-    type1: {
+    smallFast: {
         width: 20,
         height: 20,
-        speed: 0.75,
+        speed: 75,
         health: 5,
-        damage: 0.5,
+        damage: 6,
+        xpValue: 3,
         color: "red"
     },
 
-    type2: {
-        width: 40,
-        height: 40,
-        speed: 0.25,
-        health: 25,
-        damage: 1.25,
-        color: "green"
-    },
-
-    type3: {
+    normal: {
         width: 30,
         height: 30,
-        speed: 0.5,
-        health: 15,
-        damage: 0.75,
+        speed: 50,
+        health: 20,
+        damage: 10,
+        xpValue: 5,
         color: "purple"
+    },
+
+    tank: {
+        width: 50,
+        height: 50,
+        speed: 25,
+        health: 70,
+        damage: 15,
+        xpValue: 8,
+        color: "blue"
+    },
+
+    boss: {
+        width: 100,
+        height: 100,
+        speed: 15,
+        health: 1000,
+        damage: 70,
+        xpValue: 999,
+        color: "orange"
     }
 }
 
-function getCenter(object){
-    return{
-        x: object.x + object.width / 2,
-        y: object.y + object.height / 2,
+const enemyTypeOrder = ["smallFast", "normal", "tank"];
+const enemyPhaseDuration = 60;
+
+export function resetEnemies() {
+    enemies.length = 0;
+    enemySpawnTimer = 0;
+}
+
+function getCurrentEnemyType(elapsedTime) {
+    const currentPhase = Math.floor(elapsedTime / enemyPhaseDuration);
+
+    if (currentPhase > enemyTypeOrder.length) {
+        return "boss";
     }
+
+    return enemyTypeOrder[currentPhase];
 }
 
-function getRadius(object){
-    return Math.max(object.width, object.height) / 2;
-}
-
-function getRandomEnemyType(){
-    const typeNames = Object.keys(enemyTypes);
-    const randomIndex = Math.floor(Math.random() * typeNames.length);
-
-    return typeNames[randomIndex];
-}
-
-function spawnEnemy(canvas) {
-    const typeName = getRandomEnemyType();
+function spawnEnemy(canvas, elapsedTime) {
+    const typeName = getCurrentEnemyType(elapsedTime);
     const type = enemyTypes[typeName];
 
     let x;
     let y;
 
     const side = Math.floor(Math.random() * 4);
+    const spawnOffset = 60;
 
     if (side === 0) {
         x = Math.random() * canvas.width;
-        y = -type.height;
+        y = -spawnOffset;
     } else if (side === 1) {
-        x = canvas.width + type.width;
+        x = canvas.width + spawnOffset;
         y = Math.random() * canvas.height;
     } else if (side === 2) {
         x = Math.random() * canvas.width;
-        y = canvas.height + type.height;
+        y = canvas.height + spawnOffset;
     } else {
-        x = -type.width;
+        x = -spawnOffset;
         y = Math.random() * canvas.height;
     }
 
     enemies.push({
         x: x,
         y: y,
+
         width: type.width,
         height: type.height,
         speed: type.speed,
         health: type.health,
         damage: type.damage,
+        xpValue: type.xpValue,
         color: type.color,
         typeName: typeName
-    });
+    })
 }
 
-export function updateEnemySpawn(canvas) {
-    enemySpawnTimer++;
+export function updateEnemySpawn(canvas, elapsedTime) {
+    enemySpawnTimer += deltaTime;
+    
+    if (elapsedTime % enemySpawnAccelerationInterval === 0) {
+        enemySpawnInterval = Math.max(minimumSpawnInterval, enemySpawnInterval - enemySpawnAcceleration);
+    }
 
     if (enemySpawnTimer >= enemySpawnInterval) {
-        spawnEnemy(canvas);
+        spawnEnemy(canvas, elapsedTime);
         enemySpawnTimer = 0;
     }
 }
 
-export function updateEnemies(player) {
-    const playerCenter = getCenter(player);
+export function updateEnemies(player, deltaTime) {
+    moveEnemiesTowardsPlayer(player, deltaTime);
+    damagePlayerIfColliding(player);
 
-    for (let i = 0; i < enemies.length; i++) {
-        const enemy = enemies[i];
-        const enemyCenter = getCenter(enemy);
-
-        const distanceX = playerCenter.x - enemyCenter.x;
-        const distanceY = playerCenter.y - enemyCenter.y;
-
-        const distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
-
-        if (distance > 0) {
-            enemy.x += (distanceX / distance) * enemy.speed;
-            enemy.y += (distanceY / distance) * enemy.speed;
-        }
-    }
-    
     separateEnemiesFromPlayer(player);
     separateEnemiesFromEachOther();
+}
+
+function moveEnemiesTowardsPlayer(player, deltaTime) {
+    for (let i = 0; i < enemies.length; i++) {
+        const enemy = enemies[i];
+
+        const distanceX = player.x - enemy.x;
+        const distanceY = player.y - enemy.y;
+
+        const direction = normalizeVector(distanceX, distanceY);
+
+        enemy.x += direction.x * enemy.speed * deltaTime;
+        enemy.y += direction.y * enemy.speed * deltaTime;
+    }
+}
+
+function damagePlayerIfColliding(player) {
+    for (let i = 0; i < enemies.length; i++) {
+        const enemy = enemies[i];
+
+        if (isColliding(player, enemy)) {
+            const armorReduction = player.armor;
+            const finalDamage = enemy.damage * (1 - armorReduction);
+
+            player.health -= finalDamage;
+            
+            break;
+        }
+    }
 }
 
 function separateEnemiesFromPlayer(player){
@@ -198,6 +238,6 @@ export function drawEnemies(ctx) {
         const enemy = enemies[i];
 
         ctx.fillStyle = enemy.color;
-        ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+        ctx.fillRect(enemy.x - enemy.width / 2, enemy.y - enemy.height / 2, enemy.width, enemy.height);
     }
 }
