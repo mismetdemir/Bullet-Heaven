@@ -5,8 +5,12 @@ export const enemies = [];
 let enemySpawnTimer = 0;
 let enemySpawnInterval = 2;
 let minimumSpawnInterval = 0.5;
-let enemySpawnAcceleration = 0.1;
+let enemySpawnAccelerationTimer = 0;
 let enemySpawnAccelerationInterval = 10;
+let enemySpawnAcceleration = 0.1;
+
+const BOSS_SPAWN_TIME = 180;
+let bossSpawned = false;
 
 const enemyTypes = {
     smallFast: {
@@ -56,14 +60,13 @@ const enemyPhaseDuration = 60;
 export function resetEnemies() {
     enemies.length = 0;
     enemySpawnTimer = 0;
+    enemySpawnInterval = 2;
+    bossSpawned = false;
+    enemySpawnAccelerationTimer = 0;
 }
 
 function getCurrentEnemyType(elapsedTime) {
     const currentPhase = Math.floor(elapsedTime / enemyPhaseDuration);
-
-    if (currentPhase > enemyTypeOrder.length) {
-        return "boss";
-    }
 
     return enemyTypeOrder[currentPhase];
 }
@@ -107,24 +110,50 @@ function spawnEnemy(canvas, elapsedTime) {
     })
 }
 
-export function updateEnemySpawn(canvas, elapsedTime) {
-    enemySpawnTimer += deltaTime;
+function spawnBoss(canvas) {
+    const type = enemyTypes.boss;
+
+    enemies.push({
+        x: canvas.width / 2,
+        y: -100,
+
+        width: type.width,
+        height: type.height,
+        speed: type.speed,
+        health: type.health,
+        damage: type.damage,
+        xpValue: type.xpValue,
+        color: type.color,
+        typeName: "boss"
+    })
+}
+
+export function updateEnemySpawn(canvas, elapsedTime, deltaTime) {
+    if (bossSpawned) return;
     
-    if (elapsedTime % enemySpawnAccelerationInterval === 0) {
+    if (elapsedTime >= BOSS_SPAWN_TIME) {
+        spawnBoss(canvas);
+        bossSpawned = true;
+        return;
+    }
+    
+    enemySpawnTimer += deltaTime;
+    enemySpawnAccelerationTimer += deltaTime;
+
+    if (enemySpawnAccelerationTimer >= enemySpawnAccelerationInterval) {
         enemySpawnInterval = Math.max(minimumSpawnInterval, enemySpawnInterval - enemySpawnAcceleration);
+        enemySpawnAccelerationTimer = 0;
     }
 
-    if (enemySpawnTimer >= enemySpawnInterval && elapsedTime < 180) {
+    if (enemySpawnTimer >= enemySpawnInterval) {
         spawnEnemy(canvas, elapsedTime);
         enemySpawnTimer = 0;
-    } else if (elapsedTime >= 180) {
-        spawnEnemy(canvas,elapsedTime);
     }
 }
 
 export function updateEnemies(player, deltaTime) {
     moveEnemiesTowardsPlayer(player, deltaTime);
-    damagePlayerIfColliding(player);
+    damagePlayerIfColliding(player, deltaTime);
 
     separateEnemiesFromPlayer(player);
     separateEnemiesFromEachOther();
@@ -144,7 +173,7 @@ function moveEnemiesTowardsPlayer(player, deltaTime) {
     }
 }
 
-function damagePlayerIfColliding(player) {
+function damagePlayerIfColliding(player, deltaTime) {
     for (let i = 0; i < enemies.length; i++) {
         const enemy = enemies[i];
 
@@ -152,7 +181,7 @@ function damagePlayerIfColliding(player) {
             const armorReduction = player.armor;
             const finalDamage = enemy.damage * (1 - armorReduction);
 
-            player.health -= finalDamage;
+            player.health -= finalDamage * deltaTime;
             
             break;
         }

@@ -1,6 +1,6 @@
 import { keys } from "./input.js";
 import { createPlayer, updatePlayer, drawPlayer } from "./player.js";
-import { updateEnemySpawn, updateEnemies, drawEnemies } from "./enemy.js";
+import { enemies, resetEnemies, updateEnemySpawn, updateEnemies, drawEnemies } from "./enemy.js";
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -10,28 +10,38 @@ canvas.height = window.innerHeight;
 
 const player = createPlayer(canvas);
 
-function update() {
-    updatePlayer(player, keys, canvas);
-    updateEnemySpawn(canvas);
-    updateEnemies(player);
+const game = {
+    elapsedTime: 0
 }
 
-function draw() {
+function update(deltaTime) {
+    game.elapsedTime += deltaTime;
+
+
+    updatePlayer(player, keys, canvas, deltaTime);
+    updateEnemySpawn(canvas, game.elapsedTime, deltaTime);
+    updateEnemies(player, deltaTime);
+}
+
+function drawGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "limegreen";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     drawPlayer(ctx, player);
     drawEnemies(ctx);
 }
 
-let lastTime = 0;
+let lastTime = performance.now();
 
 function gameLoop(currentTime) {
     const deltaTime = (currentTime - lastTime) / 1000;
     lastTime = currentTime;
 
     update(deltaTime);
-    draw();
+    drawGame();
 
     requestAnimationFrame(gameLoop);
 }
 
-gameLoop();
+requestAnimationFrame(gameLoop);
