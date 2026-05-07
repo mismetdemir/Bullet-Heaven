@@ -18,9 +18,9 @@ export function createPlayer(canvas) {
         lastDirectionX: 1,
         lastDirectionY:0,
 
-        fireCooldown: 0,
+        fireTimer: 0,
         fireInterval: 0.5,
-        bulletSpeed: 5,
+        bulletSpeed: 500,
         damage: 10,
 
         growth: 1,

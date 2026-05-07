@@ -18,6 +18,9 @@ export function getCenter(object){
 }
 
 export function getRadius(object){
+    if (object.hitboxRadius !== undefined) {
+        return object.hitboxRadius
+    }
     return Math.max(object.width, object.height) / 2;
 }
 

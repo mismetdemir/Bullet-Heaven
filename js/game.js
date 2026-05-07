@@ -3,6 +3,7 @@ import { createPlayer, updatePlayer, drawPlayer } from "./player.js";
 import { enemies, resetEnemies, updateEnemySpawn, updateEnemies, drawEnemies } from "./enemy.js";
 import { drawStartScreen, getStartButtons, drawPauseScreen, drawLevelUpScreen, drawGameOverScreen, drawHUD } from "./ui.js";
 import { getUpgradeOptions, applyUpgrade } from "./upgrade.js";
+import { resetBullets, updatePlayerFiring, updateBullets, handleBulletCollisions, drawBullets } from "./bullet.js";
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -57,6 +58,7 @@ function startGame() {
 function resetGame() {
     player = createPlayer(canvas);
     resetEnemies();
+    resetBullets();
     game.elapsedTime = 0;
     game.upgradeOptions = [];
     game.killCount = 0;
@@ -68,6 +70,11 @@ function update(deltaTime) {
     updatePlayer(player, keys, canvas, deltaTime);
     updateEnemySpawn(canvas, game.elapsedTime, deltaTime);
     updateEnemies(player, deltaTime);
+    updatePlayerFiring(player, deltaTime);
+    updateBullets(canvas, deltaTime);
+
+    const killedEnemies = handleBulletCollisions(enemies);
+    game.killCount += killedEnemies;
 
     if (player.health <= 0) {
         currentState = GAME_STATE.GAME_OVER;
@@ -83,6 +90,7 @@ function drawGame() {
     drawPlayer(ctx, player);
     drawEnemies(ctx);
     drawHUD(ctx, canvas, player, game.elapsedTime);
+    drawBullets(ctx);
 }
 
 function chooseUpgrade(index) {
@@ -121,7 +129,7 @@ function gameLoop(currentTime) {
         drawLevelUpScreen(ctx, canvas, game.upgradeOptions);
     } else if (currentState === GAME_STATE.GAME_OVER) {
         drawGame();
-        drawGameOverScreen(ctx, canvas, game.elapsedTime);
+        drawGameOverScreen(ctx, canvas, game.elapsedTime, game.killCount);
     }
 
     requestAnimationFrame(gameLoop);

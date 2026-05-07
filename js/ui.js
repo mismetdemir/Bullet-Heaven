@@ -64,7 +64,7 @@ export function drawHUD(ctx, canvas, player, elapsedTime) {
     drawTimer(ctx, canvas, elapsedTime);
     drawUpgradeSlots(ctx, player);
     drawXPBar(ctx, canvas, player);
-    drawPlayerHealthBar(ctx, canvas, player);
+    drawPlayerHealthBar(ctx, player);
 }
 
 function drawTimer(ctx, canvas, elapsedTime) {
@@ -81,7 +81,7 @@ function drawUpgradeSlots(ctx, player) {
     const startX = 6;
     const startY = 6;
 
-    for (let i = 0; i < player.maxUpgrades; i++) {
+    for (let i = 0; i < player.maxUpgradeSlots; i++) {
         const x = startX + i * (slotSize + gap);
         const y = startY;
 
@@ -185,7 +185,7 @@ function drawPauseUpgradeList(ctx, player){
         const upgradeKey = player.selectedUpgrades[i];
         const level = player.upgradeLevels[upgradeKey];
 
-        drawPauseUpgradeCard(ctx, startX, startY + i * (58 + gap), level);
+        drawPauseUpgradeCard(ctx, startX, startY + i * (58 + gap), upgradeKey, level);
     }
 }
 
@@ -220,7 +220,7 @@ function drawPauseUpgradeCard(ctx, x, y, upgradeKey, level) {
 }
 
 export function drawLevelUpScreen(ctx, canvas, upgradeOptions) {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.5";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "white";
