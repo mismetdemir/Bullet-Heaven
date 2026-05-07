@@ -114,9 +114,11 @@ export function updateEnemySpawn(canvas, elapsedTime) {
         enemySpawnInterval = Math.max(minimumSpawnInterval, enemySpawnInterval - enemySpawnAcceleration);
     }
 
-    if (enemySpawnTimer >= enemySpawnInterval) {
+    if (enemySpawnTimer >= enemySpawnInterval && elapsedTime < 180) {
         spawnEnemy(canvas, elapsedTime);
         enemySpawnTimer = 0;
+    } else if (elapsedTime >= 180) {
+        spawnEnemy(canvas,elapsedTime);
     }
 }
 
