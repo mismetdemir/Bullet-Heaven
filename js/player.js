@@ -5,8 +5,8 @@ export function createPlayer(canvas) {
         x: canvas.width / 2,
         y: canvas.height / 2,
 
-        width: 40,
-        height: 40,
+        width: 60,
+        height: 60,
 
         speed: 100,
 
@@ -94,7 +94,7 @@ function updatePlayerDamageFlash(player, deltaTime) {
 
 export function drawPlayer(ctx, player) {
     if (player.damageFlashTimer > 0) {
-        ctx.fillStyle = "#ff4646"
+        ctx.fillStyle = "#ff1b1b"
     } else {
         ctx.fillStyle = player.color;
     }

@@ -4,29 +4,29 @@ export const enemies = [];
 
 let enemySpawnTimer = 0;
 let enemySpawnInterval = 2;
-let minimumSpawnInterval = 0.5;
+let minimumSpawnInterval = 0.05;
 let enemySpawnAccelerationTimer = 0;
-let enemySpawnAccelerationInterval = 10;
-let enemySpawnAcceleration = 0.1;
+let enemySpawnAccelerationInterval = 3;
+let enemySpawnAcceleration = 0.05;
 
 const BOSS_SPAWN_TIME = 180;
 let bossSpawned = false;
 
 const enemyTypes = {
     smallFast: {
-        width: 20,
-        height: 20,
-        speed: 75,
+        width: 30,
+        height: 30,
+        speed: 80,
         health: 5,
-        damage: 6,
-        xpValue: 3,
-        color: "red"
+        damage: 10,
+        xpValue: 4,
+        color: "orange"
     },
 
     normal: {
-        width: 30,
-        height: 30,
-        speed: 50,
+        width: 50,
+        height: 50,
+        speed: 60,
         health: 20,
         damage: 10,
         xpValue: 5,
@@ -34,9 +34,9 @@ const enemyTypes = {
     },
 
     tank: {
-        width: 50,
-        height: 50,
-        speed: 25,
+        width: 80,
+        height: 80,
+        speed: 40,
         health: 70,
         damage: 15,
         xpValue: 8,
@@ -44,9 +44,9 @@ const enemyTypes = {
     },
 
     boss: {
-        width: 100,
-        height: 100,
-        speed: 15,
+        width: 150,
+        height: 150,
+        speed: 50,
         health: 3000,
         damage: 70,
         xpValue: 3,
