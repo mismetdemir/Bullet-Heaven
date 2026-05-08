@@ -5,7 +5,7 @@ export const upgradeDefinitions = {
         key: "maxHealth",
         name: "Max Health",
         symbol: "H",
-        color: "#ef4444",
+        color: "#ea1717",
         description: "Increase maximum health"
     },
 
@@ -21,7 +21,7 @@ export const upgradeDefinitions = {
         key: "regen",
         name: "Regen",
         symbol: "R",
-        color: "#22c55e",
+        color: "#1ce164",
         description: "Increase health regen"
     },
 
@@ -36,8 +36,8 @@ export const upgradeDefinitions = {
     bulletSpeed: {
         key: "bulletSpeed",
         name: "Bullet Speed",
-        symbol: "P",
-        color: "#38bdf8",
+        symbol: "B",
+        color: "#87cbe9",
         description: "Bullets travel faster"
     },
 
@@ -45,7 +45,7 @@ export const upgradeDefinitions = {
         key: "growth",
         name: "Growth",
         symbol: "G",
-        color: "#a855f7",
+        color: "#8e2ee9",
         description: "Gain more XP"
     },
 
@@ -53,7 +53,7 @@ export const upgradeDefinitions = {
         key: "firingSpeed",
         name: "Firing Speed",
         symbol: "F",
-        color: "#fb7185",
+        color: "#e96a7d",
         description: "Use weapon faster"
     },
 
@@ -63,6 +63,14 @@ export const upgradeDefinitions = {
         symbol: "D",
         color: "#f97316",
         description: "Increase bullet damage"
+    },
+
+    magnet: {
+        key: "magnet",
+        name: "Magnet",
+        symbol: "M",
+        color: "#0f1ae8",
+
     }
 };
 
@@ -112,6 +120,8 @@ export function applyUpgrade(player, upgradeKey) {
         player.fireInterval *= 0.9;
     } else if (upgradeKey === "damage") {
         player.damage += 4;
+    } else if (upgradeKey === "magnet") {
+        player.magnet += 1.1;
     }
 
     return true;

@@ -85,7 +85,7 @@ function drawUpgradeSlots(ctx, player) {
         const x = startX + i * (slotSize + gap);
         const y = startY;
 
-        ctx.fillStyle = "orange";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
         ctx.fillRect(x, y, slotSize, slotSize);
 
         ctx.strokeStyle = "black";
@@ -297,6 +297,6 @@ export function drawGameOverScreen(ctx, canvas, elapsedTime, killCount) {
     ctx.fillText(`Kill Count: ${killCount}`, canvas.width / 2, canvas.height / 2 + 20);
 
     ctx.font = "20px Arial";
-    ctx.fillText("Press Enter to Restart", canvas.width / 2, canvas.height / 2 + 75);
+    ctx.fillText("Press Space to Restart", canvas.width / 2, canvas.height / 2 + 75);
     ctx.textAlign = "left";
 }
