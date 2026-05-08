@@ -73,6 +73,8 @@ export function handleBulletCollisions(enemies) {
 
             if (isColliding(bullet, enemy)) {
                 enemy.health -= bullet.damage;
+                enemy.damageFlashTimer = enemy.damageFlashDuration;
+                
                 bullets.splice(i, 1);
 
                 if (enemy.health <= 0) {

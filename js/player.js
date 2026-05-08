@@ -35,6 +35,9 @@ export function createPlayer(canvas) {
 
         weaponLevel: 1,
 
+        damageFlashTimer: 0,
+        damageFlashDuration: 0.12,
+
         color: "white"
     };
 }
@@ -43,6 +46,7 @@ export function createPlayer(canvas) {
 export function updatePlayer(player, keys, canvas, deltaTime) {
     updatePlayerMovement(player, keys, canvas, deltaTime);
     updatePlayerRegeneration(player, deltaTime);
+    updatePlayerDamageFlash(player, deltaTime);
 }
 
 function updatePlayerMovement(player, keys, canvas, deltaTime) {
@@ -78,8 +82,22 @@ function updatePlayerRegeneration(player, deltaTime) {
     }
 }
 
+function updatePlayerDamageFlash(player, deltaTime) {
+    if (player.damageFlashTimer > 0) {
+        player.damageFlashTimer -= deltaTime;
+    }
+
+    if (player.damageFlashTimer < 0) {
+        player.damageFlashTimer = 0;
+    }
+}
 
 export function drawPlayer(ctx, player) {
-    ctx.fillStyle = player.color;
+    if (player.damageFlashTimer > 0) {
+        ctx.fillStyle = "#ff4646"
+    } else {
+        ctx.fillStyle = player.color;
+    }
+
     ctx.fillRect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
 }

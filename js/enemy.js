@@ -106,8 +106,10 @@ function spawnEnemy(canvas, elapsedTime) {
         damage: type.damage,
         xpValue: type.xpValue,
         color: type.color,
-        typeName: typeName
-    })
+        typeName: typeName,
+        damageFlashTimer: 0,
+        damageFlashDuration: 0.08,
+    });
 }
 
 function spawnBoss(canvas) {
@@ -124,8 +126,10 @@ function spawnBoss(canvas) {
         damage: type.damage,
         xpValue: type.xpValue,
         color: type.color,
-        typeName: "boss"
-    })
+        typeName: "boss",
+        damageFlashTimer: 0,
+        damageFlashDuration: 0.08,
+    });
 }
 
 export function updateEnemySpawn(canvas, elapsedTime, deltaTime) {
@@ -153,6 +157,7 @@ export function updateEnemySpawn(canvas, elapsedTime, deltaTime) {
 
 export function updateEnemies(player, deltaTime) {
     moveEnemiesTowardsPlayer(player, deltaTime);
+    updateEnemyDamageFlash(deltaTime);
     damagePlayerIfColliding(player, deltaTime);
 
     separateEnemiesFromPlayer(player);
@@ -173,6 +178,20 @@ function moveEnemiesTowardsPlayer(player, deltaTime) {
     }
 }
 
+function updateEnemyDamageFlash(deltaTime) {
+    for (let i = 0; i < enemies.length; i++) {
+        const enemy = enemies[i];
+
+        if (enemy.damageFlashTimer > 0) {
+            enemy.damageFlashTimer -= deltaTime;
+        }
+
+        if (enemy.damageFlashTimer < 0) {
+            enemy.damageFlashTimer = 0;
+        }
+    }
+}
+
 function damagePlayerIfColliding(player, deltaTime) {
     for (let i = 0; i < enemies.length; i++) {
         const enemy = enemies[i];
@@ -182,6 +201,7 @@ function damagePlayerIfColliding(player, deltaTime) {
             const finalDamage = enemy.damage * (1 - armorReduction);
 
             player.health -= finalDamage * deltaTime;
+            player.damageFlashTimer = player.damageFlashDuration;
             
             break;
         }
@@ -268,7 +288,12 @@ export function drawEnemies(ctx) {
     for (let i = 0; i < enemies.length; i++) {
         const enemy = enemies[i];
 
-        ctx.fillStyle = enemy.color;
+        if (enemy.damageFlashTimer > 0) {
+            ctx.fillStyle = "white";
+        } else {
+            ctx.fillStyle = enemy.color;
+        }
+
         ctx.fillRect(enemy.x - enemy.width / 2, enemy.y - enemy.height / 2, enemy.width, enemy.height);
     }
 }
