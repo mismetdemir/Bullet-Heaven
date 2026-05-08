@@ -42,8 +42,6 @@ export function drawStartScreen(ctx, canvas) {
     for (let i = 0; i < buttons.length; i++) {
         drawStartButton(ctx, buttons[i]);
     }
-
-    ctx.restore();
 }
 
 function drawStartButton(ctx, button) {
@@ -65,7 +63,7 @@ export function drawHUD(ctx, canvas, player, elapsedTime) {
     drawUpgradeSlots(ctx, player);
     drawXPBar(ctx, canvas, player);
     drawPlayerHealthBar(ctx, player);
-   drawPlayerLevel(ctx, canvas, player);
+    drawPlayerLevel(ctx, canvas, player);
 }
 
 function drawTimer(ctx, canvas, elapsedTime) {
@@ -73,7 +71,6 @@ function drawTimer(ctx, canvas, elapsedTime) {
     ctx.font = "bold 30px Arial";
     ctx.textAlign = "center";
     ctx.fillText(formatTime(elapsedTime), canvas.width / 2, 30);
-    ctx.restore();
 }
 
 function drawUpgradeSlots(ctx, player) {
@@ -111,7 +108,6 @@ function drawUpgradeIcon(ctx, x, y, size, upgradeKey) {
     ctx.font = "bold 15px Arial";
     ctx.textAlign = "center";
     ctx.fillText(upgrade.symbol, x + size / 2, y + size / 2 + 5);
-    ctx.restore();
 }
 
 function drawXPBar(ctx, canvas, player) {
@@ -151,13 +147,10 @@ function drawPlayerHealthBar(ctx, player) {
 }
 
 function drawPlayerLevel(ctx, canvas, player) {
-    const level = player.level;
-
     ctx.fillStyle = "white";
     ctx.font = "bold 25px Arial";
     ctx.textAlign = "right";
-    ctx.fillText(`Level ${level}`, canvas.width - 10, 30);
-    ctx.restore();
+    ctx.fillText(`Level ${player.level}`, canvas.width - 10, 30);
 }
 
 export function drawPauseScreen(ctx, canvas, player) {
@@ -254,8 +247,6 @@ export function drawLevelUpScreen(ctx, canvas, upgradeOptions) {
         const upgradeKey = upgradeOptions[i];
         drawUpgradeSelectionCard(ctx, startX + i * (cardWidth + gap), startY, cardWidth, cardHeight, upgradeKey, i + 1);
     }
-
-    ctx.restore();
 }
 
 function drawUpgradeSelectionCard(ctx, x, y, width, height, upgradeKey, number) {
@@ -290,11 +281,10 @@ function drawUpgradeSelectionCard(ctx, x, y, width, height, upgradeKey, number) 
 
     ctx.font = "15px Arial";
     wrapText(ctx, upgrade.description, x + width / 2, y + 146, width - 26, 19);
-    ctx.textAlign = "left";
 }
 
 export function drawGameOverScreen(ctx, canvas, elapsedTime, killCount) {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.76)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "white";
@@ -309,5 +299,22 @@ export function drawGameOverScreen(ctx, canvas, elapsedTime, killCount) {
 
     ctx.font = "20px Arial";
     ctx.fillText("Press Space to Restart", canvas.width / 2, canvas.height / 2 + 75);
-    ctx.textAlign = "left";
+}
+
+export function drawWinScreen(ctx, canvas, elapsedTime, killCount) {
+    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    
+    ctx.font = "bold 54px Arial";
+    ctx.fillText("You Win!", canvas.width / 2, canvas.height / 2 - 80);
+
+    ctx.font = "26px Arial";
+    ctx.fillText(`Time: ${formatTime(elapsedTime)}`, canvas.width / 2, canvas.height / 2 - 20);
+    ctx.fillText(`Kill Count: ${killCount}`, canvas.width / 2, canvas.height / 2 + 20);
+
+    ctx.font = "20px Arial";
+    ctx.fillText("Press Space to Restart", canvas.width / 2, canvas.height / 2 + 75);
 }

@@ -47,9 +47,9 @@ const enemyTypes = {
         width: 100,
         height: 100,
         speed: 15,
-        health: 1000,
+        health: 3000,
         damage: 70,
-        xpValue: 999,
+        xpValue: 3,
         color: "orange"
     }
 }

@@ -63,6 +63,7 @@ export function updateBullets(canvas, deltaTime) {
 
 export function handleBulletCollisions(enemies) {
     let killedEnemies = 0;
+    let bossKilled = false;
 
     for (let i = bullets.length - 1; i >= 0; i--) {
         const bullet = bullets[i];
@@ -75,6 +76,10 @@ export function handleBulletCollisions(enemies) {
                 bullets.splice(i, 1);
 
                 if (enemy.health <= 0) {
+                    if (enemy.typeName === "boss") {
+                        bossKilled = true;
+                    }
+
                     createXPOrb(enemy.x, enemy.y, enemy.xpValue)
                     enemies.splice(j, 1);
                     killedEnemies++;
@@ -85,7 +90,7 @@ export function handleBulletCollisions(enemies) {
         }
     }
 
-    return killedEnemies;
+    return {killedEnemies, bossKilled};
 }
 
 export function drawBullets(ctx) {

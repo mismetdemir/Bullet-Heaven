@@ -6,6 +6,7 @@ export const keys = {
 };
 
 const pressedKeys = {
+    space: false,
     escape: false,
     one: false,
     two: false,
@@ -21,6 +22,7 @@ document.addEventListener("keydown", (event) => {
     if (event.key === "d") keys.right = true;
 
     if (!event.repeat) {
+        if (event.code === "Space") pressedKeys.space = true;
         if (event.key === "Escape") pressedKeys.escape = true;
         if (event.key === "1") pressedKeys.one = true;
         if (event.key === "2") pressedKeys.two = true;

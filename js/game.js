@@ -1,7 +1,7 @@
 import { keys,consumeKey } from "./input.js";
 import { createPlayer, updatePlayer, drawPlayer } from "./player.js";
 import { enemies, resetEnemies, updateEnemySpawn, updateEnemies, drawEnemies } from "./enemy.js";
-import { drawStartScreen, getStartButtons, drawPauseScreen, drawLevelUpScreen, drawGameOverScreen, drawHUD } from "./ui.js";
+import { drawStartScreen, getStartButtons, drawPauseScreen, drawLevelUpScreen, drawGameOverScreen, drawHUD, drawWinScreen } from "./ui.js";
 import { getUpgradeOptions, applyUpgrade } from "./upgrade.js";
 import { resetBullets, updatePlayerFiring, updateBullets, handleBulletCollisions, drawBullets } from "./bullet.js";
 import { resetXP, createXPOrb, updateXPOrbs, drawXPOrbs } from "./xp.js";
@@ -17,7 +17,8 @@ const GAME_STATE = {
     PLAYING: "playing",
     LEVEL_UP: "levelUp",
     PAUSED: "paused",
-    GAME_OVER: "gameOver"
+    GAME_OVER: "gameOver",
+    WIN: "win"
 }
 
 let currentState = GAME_STATE.START;
@@ -75,8 +76,13 @@ function update(deltaTime) {
     updatePlayerFiring(player, deltaTime);
     updateBullets(canvas, deltaTime);
 
-    const killedEnemies = handleBulletCollisions(enemies, createXPOrb);
-    game.killCount += killedEnemies;
+    const result = handleBulletCollisions(enemies, createXPOrb);
+    game.killCount += result.killedEnemies;
+
+    if (result.bossKilled) {
+        currentState = GAME_STATE.WIN;
+        return;
+    }
 
     const leveledUp = updateXPOrbs(player, deltaTime);
 
@@ -139,9 +145,16 @@ function gameLoop(currentTime) {
         drawLevelUpScreen(ctx, canvas, game.upgradeOptions);
     } else if (currentState === GAME_STATE.GAME_OVER) {
         if (consumeKey("space")) startGame();
+        if (consumeKey("escape")) currentState = GAME_STATE.START;
         
         drawGame();
         drawGameOverScreen(ctx, canvas, game.elapsedTime, game.killCount);
+    } else if (currentState === GAME_STATE.WIN) {
+        if (consumeKey("space")) startGame();
+        if (consumeKey("escape")) currentState = GAME_STATE.START;
+
+        drawGame();
+        drawWinScreen(ctx, canvas, game.elapsedTime, game.killCount);
     }
 
     requestAnimationFrame(gameLoop);
