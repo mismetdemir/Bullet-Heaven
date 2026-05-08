@@ -29,7 +29,7 @@ const enemyTypes = {
         speed: 60,
         health: 20,
         damage: 10,
-        xpValue: 5,
+        xpValue: 10,
         color: "purple"
     },
 
@@ -39,7 +39,7 @@ const enemyTypes = {
         speed: 40,
         health: 70,
         damage: 15,
-        xpValue: 8,
+        xpValue: 20,
         color: "blue"
     },
 

@@ -231,14 +231,14 @@ export function drawLevelUpScreen(ctx, canvas, upgradeOptions) {
     ctx.textAlign = "center";
 
     ctx.font = "bold 100px Arial";
-    ctx.fillText("Choose Upgrade", canvas.width / 2, canvas.height / 2 - 380);
+    ctx.fillText("Choose Upgrade", canvas.width / 2, canvas.height / 2 - 400);
 
-    ctx.font = "40px Arial";
+    ctx.font = "60px Arial";
     ctx.fillText("Press 1 / 2 / 3", canvas.width / 2, canvas.height / 2 - 300);
 
     const cardWidth = 460;
     const cardHeight = 380;
-    const gap = 68;
+    const gap = 70;
     const totalWidth = cardWidth * 3 + gap * 2;
     const startX = canvas.width / 2 - totalWidth / 2;
     const startY = canvas.height / 2 - 160;
@@ -246,15 +246,7 @@ export function drawLevelUpScreen(ctx, canvas, upgradeOptions) {
     for (let i = 0; i < upgradeOptions.length; i++) {
         const upgradeKey = upgradeOptions[i];
 
-        drawUpgradeSelectionCard(
-            ctx,
-            startX + i * (cardWidth + gap),
-            startY,
-            cardWidth,
-            cardHeight,
-            upgradeKey,
-            i + 1
-        );
+        drawUpgradeSelectionCard(ctx, startX + i * (cardWidth + gap), startY, cardWidth, cardHeight, upgradeKey, i + 1);
     }
 }
 
@@ -269,7 +261,7 @@ function drawUpgradeSelectionCard(ctx, x, y, width, height, upgradeKey, number) 
     ctx.strokeRect(x, y, width, height);
 
     ctx.fillStyle = "black";
-    ctx.font = "bold 48px Arial";
+    ctx.font = "bold 50px Arial";
     ctx.textAlign = "center";
     ctx.fillText(number, x + 50, y + 70);
 
