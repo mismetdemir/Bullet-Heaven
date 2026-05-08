@@ -93,14 +93,14 @@ function update(deltaTime) {
 function drawGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = "limegreen";
+    ctx.fillStyle = "#1a1a1a";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    drawXPOrbs(ctx);
     drawPlayer(ctx, player);
     drawEnemies(ctx);
-    drawHUD(ctx, canvas, player, game.elapsedTime);
     drawBullets(ctx);
-    drawXPOrbs(ctx);
+    drawHUD(ctx, canvas, player, game.elapsedTime);
 }
 
 function chooseUpgrade(index) {
@@ -138,6 +138,8 @@ function gameLoop(currentTime) {
         drawGame();
         drawLevelUpScreen(ctx, canvas, game.upgradeOptions);
     } else if (currentState === GAME_STATE.GAME_OVER) {
+        if (consumeKey("space")) startGame();
+        
         drawGame();
         drawGameOverScreen(ctx, canvas, game.elapsedTime, game.killCount);
     }

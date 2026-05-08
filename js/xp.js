@@ -14,7 +14,7 @@ export function createXPOrb(x, y, value) {
         height: 10,
         hitboxRadius: 10,
         value: value,
-        color: "lightblue"
+        color: "#00eeff"
     });
 }
 
@@ -25,7 +25,7 @@ export function updateXPOrbs(player, deltaTime) {
         const orb = xpOrbs[i];
         const distanceToPlayer = getDistance(orb, player);
 
-        if (distanceToPlayer < 100) {
+        if (distanceToPlayer < player.magnet) {
             const distanceX = player.x - orb.x;
             const distanceY = player.y - orb.y;
             const direction = normalizeVector(distanceX, distanceY);

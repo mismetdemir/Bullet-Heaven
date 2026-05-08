@@ -38,7 +38,7 @@ function fireBullets(player) {
 
             damage: player.damage,
 
-            color: "black"
+            color: "white"
         });
     }
 }

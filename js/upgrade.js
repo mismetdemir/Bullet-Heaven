@@ -70,7 +70,7 @@ export const upgradeDefinitions = {
         name: "Magnet",
         symbol: "M",
         color: "#0f1ae8",
-
+        description: "Increase pickup range"
     }
 };
 

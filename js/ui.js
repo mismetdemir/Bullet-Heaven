@@ -29,12 +29,12 @@ export function getStartButtons(canvas) {
 }
 
 export function drawStartScreen(ctx, canvas) {
-    ctx.fillStyle = "limegreen";
+    ctx.fillStyle = "#1a1a1a";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.textAlign = "center";
-    ctx.font = "bold 60px Arial";
+    ctx.font = "bold 80px Arial";
     ctx.fillText("Bullet Heaven", canvas.width / 2, canvas.height / 2 - 130);
 
     const buttons = getStartButtons(canvas);
@@ -47,7 +47,7 @@ export function drawStartScreen(ctx, canvas) {
 }
 
 function drawStartButton(ctx, button) {
-    ctx.fillStyle = "aqua";
+    ctx.fillStyle = "white";
     ctx.fillRect(button.x, button.y, button.width, button.height);
 
     ctx.strokeStyle = "black";
@@ -65,10 +65,11 @@ export function drawHUD(ctx, canvas, player, elapsedTime) {
     drawUpgradeSlots(ctx, player);
     drawXPBar(ctx, canvas, player);
     drawPlayerHealthBar(ctx, player);
+   drawPlayerLevel(ctx, canvas, player);
 }
 
 function drawTimer(ctx, canvas, elapsedTime) {
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.font = "bold 30px Arial";
     ctx.textAlign = "center";
     ctx.fillText(formatTime(elapsedTime), canvas.width / 2, 30);
@@ -120,10 +121,10 @@ function drawXPBar(ctx, canvas, player) {
     const xpRatio = clamp(player.xp / player.xpToNextLevel, 0, 1);
     const filledWidth = xpRatio * canvas.width;
 
-    ctx.fillStyle = "lightgrey";
+    ctx.fillStyle = "grey";
     ctx.fillRect(barX, barY, canvas.width, barHeight);
 
-    ctx.fillStyle = "lightblue";
+    ctx.fillStyle = "#00eeff";
     ctx.fillRect(barX, barY, filledWidth, barHeight);
 
     ctx.strokeStyle = "black";
@@ -149,6 +150,16 @@ function drawPlayerHealthBar(ctx, player) {
     ctx.strokeRect(x, y, barWidth, barHeight);
 }
 
+function drawPlayerLevel(ctx, canvas, player) {
+    const level = player.level;
+
+    ctx.fillStyle = "white";
+    ctx.font = "bold 25px Arial";
+    ctx.textAlign = "right";
+    ctx.fillText(`Level ${level}`, canvas.width - 10, 30);
+    ctx.restore();
+}
+
 export function drawPauseScreen(ctx, canvas, player) {
     ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -160,7 +171,7 @@ export function drawPauseScreen(ctx, canvas, player) {
 function drawWeaponLevelPanel(ctx, player) {
     const x = 10;
     const y = 50;
-    const width = 200;
+    const width = 190;
     const height = 60;
 
     ctx.fillStyle = "#121212";
@@ -173,7 +184,7 @@ function drawWeaponLevelPanel(ctx, player) {
     ctx.fillStyle = "white";
     ctx.font = "bold 16px Arial";
     ctx.textAlign = "left";
-    ctx.fillText(`Weapon level ${player.weaponLevel}`, x + 12, y + 35);
+    ctx.fillText(`Weapon Level: ${player.weaponLevel}`, x + 30, y + 35);
 }
 
 function drawPauseUpgradeList(ctx, player){

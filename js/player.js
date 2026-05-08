@@ -27,6 +27,7 @@ export function createPlayer(canvas) {
         level: 1,
         xp: 0,
         xpToNextLevel: 5,
+        magnet: 100,
 
         selectedUpgrades: [],
         upgradeLevels: {},
@@ -34,7 +35,7 @@ export function createPlayer(canvas) {
 
         weaponLevel: 1,
 
-        color: "black"
+        color: "white"
     };
 }
 
