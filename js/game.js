@@ -4,6 +4,7 @@ import { enemies, resetEnemies, updateEnemySpawn, updateEnemies, drawEnemies } f
 import { drawStartScreen, getStartButtons, drawPauseScreen, drawLevelUpScreen, drawGameOverScreen, drawHUD } from "./ui.js";
 import { getUpgradeOptions, applyUpgrade } from "./upgrade.js";
 import { resetBullets, updatePlayerFiring, updateBullets, handleBulletCollisions, drawBullets } from "./bullet.js";
+import { resetXP, createXPOrb, updateXPOrbs, drawXPOrbs } from "./xp.js";
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -59,6 +60,7 @@ function resetGame() {
     player = createPlayer(canvas);
     resetEnemies();
     resetBullets();
+    resetXP();
     game.elapsedTime = 0;
     game.upgradeOptions = [];
     game.killCount = 0;
@@ -73,8 +75,15 @@ function update(deltaTime) {
     updatePlayerFiring(player, deltaTime);
     updateBullets(canvas, deltaTime);
 
-    const killedEnemies = handleBulletCollisions(enemies);
+    const killedEnemies = handleBulletCollisions(enemies, createXPOrb);
     game.killCount += killedEnemies;
+
+    const leveledUp = updateXPOrbs(player, deltaTime);
+
+    if (leveledUp) {
+        game.upgradeOptions = getUpgradeOptions(player);
+        currentState = GAME_STATE.LEVEL_UP;
+    }
 
     if (player.health <= 0) {
         currentState = GAME_STATE.GAME_OVER;
@@ -91,6 +100,7 @@ function drawGame() {
     drawEnemies(ctx);
     drawHUD(ctx, canvas, player, game.elapsedTime);
     drawBullets(ctx);
+    drawXPOrbs(ctx);
 }
 
 function chooseUpgrade(index) {

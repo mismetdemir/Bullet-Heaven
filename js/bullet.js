@@ -1,4 +1,5 @@
 import { isColliding } from "./utils.js";
+import { createXPOrb } from "./xp.js";
 
 export const bullets = [];
 
@@ -74,6 +75,7 @@ export function handleBulletCollisions(enemies) {
                 bullets.splice(i, 1);
 
                 if (enemy.health <= 0) {
+                    createXPOrb(enemy.x, enemy.y, enemy.xpValue)
                     enemies.splice(j, 1);
                     killedEnemies++;
                 }
