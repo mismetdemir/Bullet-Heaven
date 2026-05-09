@@ -168,6 +168,7 @@ export function drawPauseScreen(ctx, canvas, player) {
 
     drawWeaponLevelPanel(ctx, player);
     drawPauseUpgradeList(ctx, player);
+    drawPauseMenuButton(ctx, getPauseMenuButton(canvas));
 }
 
 function drawWeaponLevelPanel(ctx, player) {
@@ -230,6 +231,35 @@ function drawPauseUpgradeCard(ctx, x, y, upgradeKey, level) {
 
     ctx.font = "30px Arial";
     ctx.fillText(`Level ${level}`, x + 75, y + 70);
+}
+
+export function getPauseMenuButton(canvas) {
+    return {
+        id: "mainMenu",
+        text: "Main Menu",
+        x: canvas.width / 2 - 160,
+        y: canvas.height / 2 + 180,
+        width: 320,
+        height: 80
+    };
+}
+
+function drawPauseMenuButton(ctx, button) {
+    ctx.fillStyle = "white";
+    ctx.fillRect(button.x, button.y, button.width, button.height);
+
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(button.x, button.y, button.width, button.height);
+
+    ctx.fillStyle = "black";
+    ctx.font = "bold 34px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(
+        button.text,
+        button.x + button.width / 2,
+        button.y + button.height / 2 + 12
+    );
 }
 
 export function drawLevelUpScreen(ctx, canvas, upgradeOptions) {

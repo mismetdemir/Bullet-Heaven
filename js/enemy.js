@@ -23,7 +23,7 @@ const enemyTypes = {
         health: 5,
         damage: 15,
         xpValue: 4,
-        color: "orange"
+        color: "#ef4b4b"
     },
 
     normal: {
@@ -32,8 +32,8 @@ const enemyTypes = {
         speed: 60,
         health: 20,
         damage: 20,
-        xpValue: 10,
-        color: "purple"
+        xpValue: 5,
+        color: "#834ab2"
     },
 
     tank: { 
@@ -42,8 +42,8 @@ const enemyTypes = {
         speed: 40,
         health: 70,
         damage: 25,
-        xpValue: 20,
-        color: "blue"
+        xpValue: 6,
+        color: "#4747f0"
     },
 
     boss: {
@@ -143,7 +143,7 @@ function spawnBoss(canvas) {
         damageFlashDuration: 0.08,
 
         dashCooldown: 10,
-        dashCooldownTimer: 2,
+        dashCooldownTimer: 8,
         dashChargeTime: 2,
         dashChargeTimer: 0,
         dashDuration: 0.5,

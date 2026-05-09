@@ -2,7 +2,7 @@ import { keys,consumeKey } from "./input.js";
 import { createPlayer, updatePlayer, drawPlayer } from "./player.js";
 import { enemies, resetEnemies, updateEnemySpawn, updateEnemies, drawEnemies } from "./enemy.js";
 import { drawStartScreen, getStartButtons, drawPauseScreen, drawLevelUpScreen,
-    drawGameOverScreen, drawHUD, drawWinScreen, drawHowToPlayScreen } from "./ui.js";
+    drawGameOverScreen, drawHUD, drawWinScreen, drawHowToPlayScreen, getPauseMenuButton } from "./ui.js";
 import { getUpgradeOptions, applyUpgrade } from "./upgrade.js";
 import { resetBullets, updatePlayerFiring, updateBullets, handleBulletCollisions, drawBullets } from "./bullet.js";
 import { resetXP, updateXPOrbs, drawXPOrbs } from "./xp.js";
@@ -35,27 +35,44 @@ const game = {
 }
 
 canvas.addEventListener("click", (event) => {
-    if (currentState !== GAME_STATE.START) return;
-
     const rect = canvas.getBoundingClientRect();
     const clickX = event.clientX - rect.left;
     const clickY = event.clientY - rect.top;
-    const buttons = getStartButtons(canvas);
 
-    for (let i = 0; i < buttons.length; i++) {
-        const button = buttons[i];
-        const isInside = clickX >= button.x &&
-                         clickX <= button.x + button.width &&
-                         clickY >= button.y &&
-                         clickY <= button.y + button.height;
-        
-        if (isInside && button.id != "howToPlay") {
-            startGame(button.id);
-        } else if (isInside && button.id === "howToPlay") {
-            currentState = GAME_STATE.HOWTOPLAY;
+    if (currentState === GAME_STATE.START) {
+        const buttons = getStartButtons(canvas);
+
+        for (let i = 0; i < buttons.length; i++) {
+            const button = buttons[i];
+
+            const isInside =
+                clickX >= button.x &&
+                clickX <= button.x + button.width &&
+                clickY >= button.y &&
+                clickY <= button.y + button.height;
+
+            if (isInside && button.id !== "howToPlay") {
+                startGame(button.id);
+            } else if (isInside && button.id === "howToPlay") {
+                currentState = GAME_STATE.HOWTOPLAY;
+            }
         }
     }
-})
+
+    if (currentState === GAME_STATE.PAUSED) {
+        const button = getPauseMenuButton(canvas);
+
+        const isInside =
+            clickX >= button.x &&
+            clickX <= button.x + button.width &&
+            clickY >= button.y &&
+            clickY <= button.y + button.height;
+
+        if (isInside) {
+            currentState = GAME_STATE.START;
+        }
+    }
+});
 
 function startGame(mode) {
     resetGame();
