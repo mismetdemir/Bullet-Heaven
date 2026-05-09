@@ -9,7 +9,7 @@ let enemySpawnAccelerationTimer = 0;
 let enemySpawnAccelerationInterval = 3;
 let enemySpawnAcceleration = 0.05;
 
-const BOSS_SPAWN_TIME = 180;
+const BOSS_SPAWN_TIME = 0;
 let bossSpawned = false;
 
 const enemyTypes = {
@@ -48,7 +48,7 @@ const enemyTypes = {
         height: 150,
         speed: 50,
         health: 3000,
-        damage: 70,
+        damage: 200,
         xpValue: 3,
         color: "orange"
     }
@@ -129,6 +129,17 @@ function spawnBoss(canvas) {
         typeName: "boss",
         damageFlashTimer: 0,
         damageFlashDuration: 0.08,
+
+        dashCooldown: 10,
+        dashCooldownTimer: 2,
+        dashChargeTime: 2,
+        dashChargeTimer: 0,
+        dashDuration: 0.5,
+        dashTimer: 0,
+        dashSpeed: 1500,
+        dashDirectionX: 0,
+        dashDirectionY: 0,
+        dashState: "onCooldown"
     });
 }
 
@@ -168,14 +179,63 @@ function moveEnemiesTowardsPlayer(player, deltaTime) {
     for (let i = 0; i < enemies.length; i++) {
         const enemy = enemies[i];
 
-        const distanceX = player.x - enemy.x;
-        const distanceY = player.y - enemy.y;
-
-        const direction = normalizeVector(distanceX, distanceY);
-
-        enemy.x += direction.x * enemy.speed * deltaTime;
-        enemy.y += direction.y * enemy.speed * deltaTime;
+        if (enemy.typeName === "boss") {
+            moveBoss(enemy, player, deltaTime);
+        } else {
+            moveEnemy(enemy, player, deltaTime);
+        }
     }
+}
+
+function moveEnemy(enemy, player, deltaTime) {
+    const distanceX = player.x - enemy.x;
+    const distanceY = player.y - enemy.y;
+
+    const direction = normalizeVector(distanceX, distanceY);
+
+    enemy.x += direction.x * enemy.speed * deltaTime;
+    enemy.y += direction.y * enemy.speed * deltaTime;
+}
+
+function moveBoss(boss, player, deltaTime) {
+    if (boss.dashState === "onCooldown") {
+        moveEnemy(boss, player, deltaTime);
+        
+        boss.dashCooldownTimer -= deltaTime;
+
+        if (boss.dashCooldownTimer <= 0) {
+            startBossDashCharge(boss, player);
+        }
+    } else if (boss.dashState === "charging") {
+        boss.dashChargeTimer -= deltaTime;
+
+        if (boss.dashChargeTimer <= 0) {
+            boss.dashState = "dashing";
+            boss.dashTimer = boss.dashDuration;
+        }
+    } else if (boss.dashState === "dashing") {
+        boss.x += boss.dashDirectionX * boss.dashSpeed * deltaTime;
+        boss.y += boss.dashDirectionY * boss.dashSpeed * deltaTime;
+
+        boss.dashTimer -= deltaTime;
+
+        if (boss.dashTimer <= 0) {
+            boss.dashState = "onCooldown";
+            boss.dashCooldownTimer = boss.dashCooldown;
+        }
+    }
+}
+
+function startBossDashCharge(boss, player) {
+    const distanceX = player.x - boss.x;
+    const distanceY = player.y - boss.y;
+
+    const direction = normalizeVector(distanceX, distanceY);
+
+    boss.dashDirectionX = direction.x;
+    boss.dashDirectionY = direction.y;
+    boss.dashChargeTimer = boss.dashChargeTime;
+    boss.dashState = "charging";
 }
 
 function updateEnemyDamageFlash(deltaTime) {
@@ -290,6 +350,10 @@ export function drawEnemies(ctx) {
 
         if (enemy.damageFlashTimer > 0) {
             ctx.fillStyle = "white";
+        } else if (enemy.typeName === "boss" && enemy.dashState === "charging") {
+            ctx.fillStyle = "red";
+        } else if (enemy.typeName === "boss" && enemy.dashState === "dashing") {
+            ctx.fillStyle = "yellow";
         } else {
             ctx.fillStyle = enemy.color;
         }
