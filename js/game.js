@@ -4,7 +4,7 @@ import { enemies, resetEnemies, updateEnemySpawn, updateEnemies, drawEnemies } f
 import { drawStartScreen, getStartButtons, drawPauseScreen, drawLevelUpScreen, drawGameOverScreen, drawHUD, drawWinScreen } from "./ui.js";
 import { getUpgradeOptions, applyUpgrade } from "./upgrade.js";
 import { resetBullets, updatePlayerFiring, updateBullets, handleBulletCollisions, drawBullets } from "./bullet.js";
-import { resetXP, createXPOrb, updateXPOrbs, drawXPOrbs } from "./xp.js";
+import { resetXP, updateXPOrbs, drawXPOrbs } from "./xp.js";
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -26,6 +26,7 @@ let lastTime = performance.now();
 let player = createPlayer(canvas);
 
 const game = {
+    mode: "classic",
     elapsedTime: 0,
     upgradeOptions: [],
     killCount: 0
@@ -46,14 +47,15 @@ canvas.addEventListener("click", (event) => {
                          clickY >= button.y &&
                          clickY <= button.y + button.height;
         
-        if (isInside && button.id === "classic") {
-            startGame();
+        if (isInside) {
+            startGame(button.id);
         }
     }
 })
 
-function startGame() {
+function startGame(mode) {
     resetGame();
+    game.mode = mode;
     currentState = GAME_STATE.PLAYING;
 }
 
@@ -71,12 +73,12 @@ function update(deltaTime) {
     game.elapsedTime += deltaTime;
 
     updatePlayer(player, keys, canvas, deltaTime);
-    updateEnemySpawn(canvas, game.elapsedTime, deltaTime);
+    updateEnemySpawn(canvas, game.elapsedTime, deltaTime, game.mode);
     updateEnemies(player, deltaTime);
     updatePlayerFiring(player, deltaTime);
     updateBullets(canvas, deltaTime);
 
-    const result = handleBulletCollisions(enemies, createXPOrb);
+    const result = handleBulletCollisions(enemies);
     game.killCount += result.killedEnemies;
 
     if (result.bossKilled) {
@@ -144,13 +146,13 @@ function gameLoop(currentTime) {
         drawGame();
         drawLevelUpScreen(ctx, canvas, game.upgradeOptions);
     } else if (currentState === GAME_STATE.GAME_OVER) {
-        if (consumeKey("space")) startGame();
+        if (consumeKey("space")) startGame(game.mode);
         if (consumeKey("escape")) currentState = GAME_STATE.START;
         
         drawGame();
         drawGameOverScreen(ctx, canvas, game.elapsedTime, game.killCount);
     } else if (currentState === GAME_STATE.WIN) {
-        if (consumeKey("space")) startGame();
+        if (consumeKey("space")) startGame(game.mode);
         if (consumeKey("escape")) currentState = GAME_STATE.START;
 
         drawGame();

@@ -9,8 +9,11 @@ let enemySpawnAccelerationTimer = 0;
 let enemySpawnAccelerationInterval = 3;
 let enemySpawnAcceleration = 0.05;
 
-const BOSS_SPAWN_TIME = 0;
+const BOSS_SPAWN_TIME = 180;
 let bossSpawned = false;
+
+const bossModeSpawnInterval = 2;
+let bossModeEnemyTimer = 0;
 
 const enemyTypes = {
     smallFast: {
@@ -18,7 +21,7 @@ const enemyTypes = {
         height: 30,
         speed: 80,
         health: 5,
-        damage: 10,
+        damage: 15,
         xpValue: 4,
         color: "orange"
     },
@@ -28,17 +31,17 @@ const enemyTypes = {
         height: 50,
         speed: 60,
         health: 20,
-        damage: 10,
+        damage: 20,
         xpValue: 10,
         color: "purple"
     },
 
-    tank: {
+    tank: { 
         width: 80,
         height: 80,
         speed: 40,
         health: 70,
-        damage: 15,
+        damage: 25,
         xpValue: 20,
         color: "blue"
     },
@@ -47,7 +50,7 @@ const enemyTypes = {
         width: 150,
         height: 150,
         speed: 50,
-        health: 3000,
+        health: 10000,
         damage: 200,
         xpValue: 3,
         color: "orange"
@@ -63,17 +66,26 @@ export function resetEnemies() {
     enemySpawnInterval = 2;
     bossSpawned = false;
     enemySpawnAccelerationTimer = 0;
+    bossModeEnemyTimer = 0;
 }
 
-function getCurrentEnemyType(elapsedTime) {
-    const currentPhase = Math.floor(elapsedTime / enemyPhaseDuration);
+function getCurrentEnemyType(elapsedTime, mode) {
+    if (mode === "classic") {
+        const currentPhase = Math.floor(elapsedTime / enemyPhaseDuration);
 
-    return enemyTypeOrder[currentPhase];
+        return enemyTypeOrder[currentPhase];
+    } else if (mode === "bossFight") {
+        const randomIndex = Math.floor(Math.random() * enemyTypeOrder.length);
+        
+        return enemyTypeOrder[randomIndex];
+    }
 }
 
-function spawnEnemy(canvas, elapsedTime) {
-    const typeName = getCurrentEnemyType(elapsedTime);
+function spawnEnemy(canvas, elapsedTime, mode) {
+    const typeName = getCurrentEnemyType(elapsedTime, mode);
     const type = enemyTypes[typeName];
+
+    if (!type) return;
 
     let x;
     let y;
@@ -143,15 +155,28 @@ function spawnBoss(canvas) {
     });
 }
 
-export function updateEnemySpawn(canvas, elapsedTime, deltaTime) {
-    if (bossSpawned) return;
-    
-    if (elapsedTime >= BOSS_SPAWN_TIME) {
-        spawnBoss(canvas);
-        bossSpawned = true;
+export function updateEnemySpawn(canvas, elapsedTime, deltaTime, mode) {
+    if (mode === "bossFight") {
+        if (!bossSpawned) {
+            spawnBoss(canvas);
+            bossSpawned = true;
+        }
+
+        spawnBossFightEnemies(canvas, elapsedTime, deltaTime);
         return;
     }
-    
+
+    if (mode === "classic" && elapsedTime >= BOSS_SPAWN_TIME) {
+        if (!bossSpawned) {
+            spawnBoss(canvas);
+            bossSpawned = true;
+            bossModeEnemyTimer = 0;
+        }
+
+        spawnBossFightEnemies(canvas, elapsedTime, deltaTime);
+        return;
+    }
+
     enemySpawnTimer += deltaTime;
     enemySpawnAccelerationTimer += deltaTime;
 
@@ -161,8 +186,17 @@ export function updateEnemySpawn(canvas, elapsedTime, deltaTime) {
     }
 
     if (enemySpawnTimer >= enemySpawnInterval) {
-        spawnEnemy(canvas, elapsedTime);
+        spawnEnemy(canvas, elapsedTime, mode);
         enemySpawnTimer = 0;
+    }
+}
+
+function spawnBossFightEnemies(canvas, elapsedTime, deltaTime) {
+    bossModeEnemyTimer += deltaTime;
+
+    if (bossModeEnemyTimer >= bossModeSpawnInterval) {
+        spawnEnemy(canvas, elapsedTime, "bossFight");
+        bossModeEnemyTimer = 0;
     }
 }
 

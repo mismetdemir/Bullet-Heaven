@@ -18,7 +18,7 @@ export function getStartButtons(canvas) {
             height: buttonHeight
         },
 
-        {   id: "boss",
+        {   id: "bossFight",
             text: "Boss Fight Mode",
             x: x,
             y: y + buttonHeight + gap,
