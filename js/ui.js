@@ -24,6 +24,15 @@ export function getStartButtons(canvas) {
             y: y + buttonHeight + gap,
             width: buttonWidth,
             height: buttonHeight,
+        },
+
+        {
+            id: "howToPlay",
+            text: "How to Play?",
+            x: x,
+            y: y + 2 * (buttonHeight + gap),
+            width: buttonWidth,
+            height: buttonHeight
         }
     ];
 }
@@ -318,4 +327,49 @@ export function drawWinScreen(ctx, canvas, elapsedTime, killCount) {
 
     ctx.font = "40px Arial";
     ctx.fillText("Press Space to Restart", canvas.width / 2, canvas.height / 2 + 150);
+}
+
+export function drawHowToPlayScreen(ctx, canvas) {
+    ctx.fillStyle = "#1a1a1a";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+
+    ctx.font = "bold 150px Arial";
+    ctx.fillText("How to Play?", canvas.width / 2, 180);
+
+    ctx.textAlign = "center";
+
+    const startX = canvas.width / 2;
+    let startY = 320;
+    const lineHeight = 55;
+
+    ctx.font = "40px Arial";
+    startY += lineHeight;
+    ctx.fillText("Defeat enemies to gain XP orbs", startX, startY);
+
+    startY += lineHeight;
+    ctx.fillText("Level up and choose upgrades", startX, startY);
+
+    startY += lineHeight;
+    ctx.fillText("Defeat the Boss to win", startX, startY);
+
+    startY += lineHeight + 100;
+
+    ctx.font = "bold 55px Arial";
+    ctx.fillText("Controls", startX, startY);
+
+    ctx.textAlign = "left"
+
+    ctx.font = "40px Arial";
+    startY += lineHeight;
+    ctx.fillText("• Move: W/A/S/D or Arrow Keys", startX - 300, startY);
+
+    startY += lineHeight;
+    ctx.fillText("• Upgrade Select: 1/2/3", startX - 300, startY);
+
+    startY += lineHeight;
+    ctx.fillText("• Pause / Return: Esc", startX - 300, startY);
+    
 }

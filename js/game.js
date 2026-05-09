@@ -1,7 +1,8 @@
 import { keys,consumeKey } from "./input.js";
 import { createPlayer, updatePlayer, drawPlayer } from "./player.js";
 import { enemies, resetEnemies, updateEnemySpawn, updateEnemies, drawEnemies } from "./enemy.js";
-import { drawStartScreen, getStartButtons, drawPauseScreen, drawLevelUpScreen, drawGameOverScreen, drawHUD, drawWinScreen } from "./ui.js";
+import { drawStartScreen, getStartButtons, drawPauseScreen, drawLevelUpScreen,
+    drawGameOverScreen, drawHUD, drawWinScreen, drawHowToPlayScreen } from "./ui.js";
 import { getUpgradeOptions, applyUpgrade } from "./upgrade.js";
 import { resetBullets, updatePlayerFiring, updateBullets, handleBulletCollisions, drawBullets } from "./bullet.js";
 import { resetXP, updateXPOrbs, drawXPOrbs } from "./xp.js";
@@ -18,7 +19,8 @@ const GAME_STATE = {
     LEVEL_UP: "levelUp",
     PAUSED: "paused",
     GAME_OVER: "gameOver",
-    WIN: "win"
+    WIN: "win",
+    HOWTOPLAY: "howToPlay"
 }
 
 let currentState = GAME_STATE.START;
@@ -47,8 +49,10 @@ canvas.addEventListener("click", (event) => {
                          clickY >= button.y &&
                          clickY <= button.y + button.height;
         
-        if (isInside) {
+        if (isInside && button.id != "howToPlay") {
             startGame(button.id);
+        } else if (isInside && button.id === "howToPlay") {
+            currentState = GAME_STATE.HOWTOPLAY;
         }
     }
 })
@@ -157,6 +161,10 @@ function gameLoop(currentTime) {
 
         drawGame();
         drawWinScreen(ctx, canvas, game.elapsedTime, game.killCount);
+    } else if (currentState === GAME_STATE.HOWTOPLAY) {
+        if (consumeKey("escape")) currentState = GAME_STATE.START;
+
+        drawHowToPlayScreen(ctx, canvas);
     }
 
     requestAnimationFrame(gameLoop);
