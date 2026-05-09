@@ -6,7 +6,7 @@ const sounds = {
     gameOver: new Audio("assets/sounds/game-over.mp3")
 };
 
-sounds.fire.volume = 0.25;
+sounds.fire.volume = 0.1;
 sounds.bossDash.volume = 0.6;
 sounds.levelUp.volume = 0.5;
 sounds.win.volume = 0.7;
