@@ -121,7 +121,7 @@ export function applyUpgrade(player, upgradeKey) {
     } else if (upgradeKey === "damage") {
         player.damage += 4;
     } else if (upgradeKey === "magnet") {
-        player.magnet += 1.2;
+        player.magnet *= 1.1;
     }
 
     return true;

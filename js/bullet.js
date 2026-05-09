@@ -33,7 +33,7 @@ function fireBullets(player) {
             x: player.x,
             y: player.y,
 
-            hitboxRadius: 5,
+            hitboxRadius: 2.5,
 
             velocityX: directionX * player.bulletSpeed,
             velocityY: directionY * player.bulletSpeed,
@@ -52,10 +52,10 @@ export function updateBullets(canvas, deltaTime) {
         bullet.x += bullet.velocityX * deltaTime;
         bullet.y += bullet.velocityY * deltaTime;
 
-        const isOutCanvas = bullet.x < -50 ||
-                              bullet.x > canvas.width + 50 ||
-                              bullet.y < -50 ||
-                              bullet.y > canvas.height + 50;
+        const isOutCanvas = bullet.x < -25 ||
+                              bullet.x > canvas.width + 25 ||
+                              bullet.y < -25 ||
+                              bullet.y > canvas.height + 25;
 
         if (isOutCanvas) {
             bullets.splice(i, 1);

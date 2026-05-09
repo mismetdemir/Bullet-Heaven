@@ -1,5 +1,8 @@
 import { normalizeVector, isColliding, getDistance } from "./utils.js";
 
+const orbImage = new Image();
+orbImage.src = "assets/images/xpOrb.png";
+
 export const xpOrbs = [];
 
 export function resetXP() {
@@ -10,9 +13,9 @@ export function createXPOrb(x, y, value) {
     xpOrbs.push({
         x: x,
         y: y,
-        width: 10,
-        height: 10,
-        hitboxRadius: 10,
+        width: 5,
+        height: 5,
+        hitboxRadius: 5,
         value: value,
         color: "#00eeff"
     });
@@ -30,8 +33,8 @@ export function updateXPOrbs(player, deltaTime) {
             const distanceY = player.y - orb.y;
             const direction = normalizeVector(distanceX, distanceY);
 
-            orb.x += direction.x * 250 * deltaTime;
-            orb.y += direction.y * 250 * deltaTime;
+            orb.x += direction.x * 125 * deltaTime;
+            orb.y += direction.y * 125 * deltaTime;
         }
 
         if (isColliding(orb, player)) {
@@ -69,7 +72,15 @@ export function drawXPOrbs(ctx) {
     for (let i = 0; i < xpOrbs.length; i++) {
         const orb = xpOrbs[i];
 
-        ctx.fillStyle = orb.color;
-        ctx.fillRect(orb.x - orb.width / 2, orb.y - orb.height / 2, orb.width, orb.height);
+        ctx.imageSmoothingEnabled = false;
+
+        if (orbImage.complete && orbImage.naturalWidth !== 0) {
+            ctx.drawImage(orbImage, orb.x - orb.hitboxRadius, orb.y - orb.hitboxRadius, orb.hitboxRadius * 2, orb.hitboxRadius * 2);
+        } else {
+            ctx.fillStyle = orb.color;
+            ctx.beginPath();
+            ctx.arc(orb.x, orb.y, orb.hitboxRadius, 0, Math.PI * 2);
+            ctx.fill();
+        }
     }
 }

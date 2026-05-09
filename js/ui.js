@@ -2,11 +2,11 @@ import { clamp, wrapText, formatTime } from "./utils.js";
 import { upgradeDefinitions } from "./upgrade.js";
 
 export function getStartButtons(canvas) {
-    const buttonWidth = 500;
-    const buttonHeight = 150;
-    const gap = 20;
+    const buttonWidth = 250;
+    const buttonHeight = 75;
+    const gap = 10;
     const x = canvas.width / 2 - buttonWidth / 2;
-    const y = canvas.height / 2 - 20;
+    const y = canvas.height / 2 - 10;
 
     return [
         {
@@ -43,8 +43,8 @@ export function drawStartScreen(ctx, canvas) {
 
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
-    ctx.font = "bold 200px Arial";
-    ctx.fillText("Bullet Heaven", canvas.width / 2, canvas.height / 2 - 130);
+    ctx.font = "bold 100px Arial";
+    ctx.fillText("Bullet Heaven", canvas.width / 2, canvas.height / 2 - 65);
 
     const buttons = getStartButtons(canvas);
 
@@ -58,13 +58,13 @@ function drawStartButton(ctx, button) {
     ctx.fillRect(button.x, button.y, button.width, button.height);
 
     ctx.strokeStyle = "black";
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 2;
     ctx.strokeRect(button.x, button.y, button.width, button.height);
 
     ctx.fillStyle = "black";
-    ctx.font = "bold 50px Arial";
+    ctx.font = "bold 25px Arial";
     ctx.textAlign = "center";
-    ctx.fillText(button.text, button.x + button.width / 2, button.y + button.height / 2 + 15);
+    ctx.fillText(button.text, button.x + button.width / 2, button.y + button.height / 2 + 8);
 }
 
 export function drawHUD(ctx, canvas, player, elapsedTime) {
@@ -77,16 +77,16 @@ export function drawHUD(ctx, canvas, player, elapsedTime) {
 
 function drawTimer(ctx, canvas, elapsedTime) {
     ctx.fillStyle = "white";
-    ctx.font = "bold 50px Arial";
+    ctx.font = "bold 25px Arial";
     ctx.textAlign = "center";
-    ctx.fillText(formatTime(elapsedTime), canvas.width / 2, 50);
+    ctx.fillText(formatTime(elapsedTime), canvas.width / 2, 25);
 }
 
 function drawUpgradeSlots(ctx, player) {
-    const slotSize = 50;
-    const gap = 10;
-    const startX = 10;
-    const startY = 10;
+    const slotSize = 25;
+    const gap = 5;
+    const startX = 5;
+    const startY = 5;
 
     for (let i = 0; i < player.maxUpgradeSlots; i++) {
         const x = startX + i * (slotSize + gap);
@@ -96,13 +96,13 @@ function drawUpgradeSlots(ctx, player) {
         ctx.fillRect(x, y, slotSize, slotSize);
 
         ctx.strokeStyle = "black";
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1;
         ctx.strokeRect(x, y, slotSize, slotSize);
 
         const upgradeKey = player.selectedUpgrades[i];
 
         if (upgradeKey) {
-            drawUpgradeIcon(ctx, x + 5, y + 5, slotSize - 10, upgradeKey);
+            drawUpgradeIcon(ctx, x + 2, y + 2, slotSize - 4, upgradeKey);
         }
     }
 }
@@ -114,13 +114,13 @@ function drawUpgradeIcon(ctx, x, y, size, upgradeKey) {
     ctx.fillRect(x, y, size, size);
 
     ctx.fillStyle = "black";
-    ctx.font = "bold 30px Arial";
+    ctx.font = "bold 15px Arial";
     ctx.textAlign = "center";
-    ctx.fillText(upgrade.symbol, x + size / 2, y + size / 2 + 10);
+    ctx.fillText(upgrade.symbol, x + size / 2, y + size / 2 + 5);
 }
 
 function drawXPBar(ctx, canvas, player) {
-    const barHeight = 20;
+    const barHeight = 10;
     const barX = 0;
     const barY = canvas.height - barHeight;
     const xpRatio = clamp(player.xp / player.xpToNextLevel, 0, 1);
@@ -133,15 +133,15 @@ function drawXPBar(ctx, canvas, player) {
     ctx.fillRect(barX, barY, filledWidth, barHeight);
 
     ctx.strokeStyle = "black";
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1;
     ctx.strokeRect(barX, barY, canvas.width, barHeight);
 }
 
 function drawPlayerHealthBar(ctx, player) {
-    const barWidth = player.width + 10;
-    const barHeight = 10;
+    const barWidth = player.width + 5;
+    const barHeight = 5;
     const x = player.x - barWidth / 2;
-    const y = player.y + player.height / 2 + 8;
+    const y = player.y + player.height / 2 + 4;
     const healthRatio = clamp(player.health / player.maxHealth, 0, 1);
 
     ctx.fillStyle = "#550404";
@@ -151,15 +151,15 @@ function drawPlayerHealthBar(ctx, player) {
     ctx.fillRect(x, y, barWidth * healthRatio, barHeight);
 
     ctx.strokeStyle = "black";
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1;
     ctx.strokeRect(x, y, barWidth, barHeight);
 }
 
 function drawPlayerLevel(ctx, canvas, player) {
     ctx.fillStyle = "white";
-    ctx.font = "bold 50px Arial";
+    ctx.font = "bold 25px Arial";
     ctx.textAlign = "right";
-    ctx.fillText(`Level ${player.level}`, canvas.width - 10, 50);
+    ctx.fillText(`Level ${player.level}`, canvas.width - 5, 25);
 }
 
 export function drawPauseScreen(ctx, canvas, player) {
@@ -172,75 +172,75 @@ export function drawPauseScreen(ctx, canvas, player) {
 }
 
 function drawWeaponLevelPanel(ctx, player) {
-    const x = 10;
-    const y = 70;
-    const width = 300;
-    const height = 100;
+    const x = 5;
+    const y = 5;
+    const width = 150;
+    const height = 50;
 
     ctx.fillStyle = "#121212";
     ctx.fillRect(x, y, width, height);
 
     ctx.strokeStyle = "black";
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2;
     ctx.strokeRect(x, y, width, height);
 
     ctx.fillStyle = "white";
-    ctx.font = "bold 30px Arial";
+    ctx.font = "bold 15px Arial";
     ctx.textAlign = "left";
-    ctx.fillText(`Weapon Level: ${player.weaponLevel}`, x + 30, y + 60);
+    ctx.fillText(`Weapon Level: ${player.weaponLevel}`, x + 15, y + 30);
 }
 
 function drawPauseUpgradeList(ctx, player){
-    const startX = 10;
-    const startY = 180;
-    const gap = 10;
+    const startX = 5;
+    const startY = 60;
+    const gap = 5;
 
     for (let i = 0; i < player.selectedUpgrades.length; i++) {
         const upgradeKey = player.selectedUpgrades[i];
         const level = player.upgradeLevels[upgradeKey];
 
-        drawPauseUpgradeCard(ctx, startX, startY + i * (80 + gap), upgradeKey, level);
+        drawPauseUpgradeCard(ctx, startX, startY + i * (40 + gap), upgradeKey, level);
     }
 }
 
 function drawPauseUpgradeCard(ctx, x, y, upgradeKey, level) {
     const upgrade = upgradeDefinitions[upgradeKey];
-    const width = 300;
-    const height = 80;
-    const iconSize = 60;
+    const width = 150;
+    const height = 40;
+    const iconSize = 30;
 
     ctx.fillStyle = upgrade.color;
     ctx.fillRect(x, y, width, height);
 
     ctx.strokeStyle = "black";
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2;
     ctx.strokeRect(x, y, width, height);
 
     ctx.fillStyle = "black";
-    ctx.fillRect(x + 8, y + 10, iconSize, iconSize);
+    ctx.fillRect(x + 4, y + 5, iconSize, iconSize);
 
     ctx.fillStyle = "white";
-    ctx.font = "bold 40px Arial";
+    ctx.font = "bold 20px Arial";
     ctx.textAlign = "center";
-    ctx.fillText(upgrade.symbol, x + 9 + iconSize / 2, y + 53);
+    ctx.fillText(upgrade.symbol, x + 4 + iconSize / 2, y + 27);
 
     ctx.fillStyle = "black";
-    ctx.font = "bold 35px Arial";
+    ctx.font = "bold 18px Arial";
     ctx.textAlign = "left";
-    ctx.fillText(upgrade.name, x + 75, y + 35);
+    ctx.fillText(upgrade.name, x + 38, y + 18);
 
-    ctx.font = "30px Arial";
-    ctx.fillText(`Level ${level}`, x + 75, y + 70);
+    ctx.font = "15px Arial";
+    ctx.fillText(`Level ${level}`, x + 38, y + 35);
 }
 
 export function getPauseMenuButton(canvas) {
     return {
         id: "mainMenu",
         text: "Main Menu",
-        x: canvas.width / 2 - 160,
-        y: canvas.height / 2 + 180,
-        width: 320,
-        height: 80
+        x: canvas.width / 2 - 80,
+        y: canvas.height / 2 + 90,
+        width: 160,
+        height: 40
     };
 }
 
@@ -249,17 +249,13 @@ function drawPauseMenuButton(ctx, button) {
     ctx.fillRect(button.x, button.y, button.width, button.height);
 
     ctx.strokeStyle = "black";
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 2;
     ctx.strokeRect(button.x, button.y, button.width, button.height);
 
     ctx.fillStyle = "black";
-    ctx.font = "bold 34px Arial";
+    ctx.font = "bold 17px Arial";
     ctx.textAlign = "center";
-    ctx.fillText(
-        button.text,
-        button.x + button.width / 2,
-        button.y + button.height / 2 + 12
-    );
+    ctx.fillText(button.text, button.x + button.width / 2, button.y + button.height / 2 + 6);
 }
 
 export function drawLevelUpScreen(ctx, canvas, upgradeOptions) {
@@ -269,18 +265,18 @@ export function drawLevelUpScreen(ctx, canvas, upgradeOptions) {
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
 
-    ctx.font = "bold 100px Arial";
-    ctx.fillText("Choose Upgrade", canvas.width / 2, canvas.height / 2 - 400);
+    ctx.font = "bold 50px Arial";
+    ctx.fillText("Choose Upgrade", canvas.width / 2, canvas.height / 2 - 200);
 
-    ctx.font = "60px Arial";
-    ctx.fillText("Press 1 / 2 / 3", canvas.width / 2, canvas.height / 2 - 300);
+    ctx.font = "30px Arial";
+    ctx.fillText("Press 1 / 2 / 3", canvas.width / 2, canvas.height / 2 - 150);
 
-    const cardWidth = 460;
-    const cardHeight = 380;
-    const gap = 70;
+    const cardWidth = 230;
+    const cardHeight = 190;
+    const gap = 35;
     const totalWidth = cardWidth * 3 + gap * 2;
     const startX = canvas.width / 2 - totalWidth / 2;
-    const startY = canvas.height / 2 - 160;
+    const startY = canvas.height / 2 - 80;
 
     for (let i = 0; i < upgradeOptions.length; i++) {
         const upgradeKey = upgradeOptions[i];
@@ -296,31 +292,31 @@ function drawUpgradeSelectionCard(ctx, x, y, width, height, upgradeKey, number) 
     ctx.fillRect(x, y, width, height);
 
     ctx.strokeStyle = "black";
-    ctx.lineWidth = 8;
+    ctx.lineWidth = 4;
     ctx.strokeRect(x, y, width, height);
 
     ctx.fillStyle = "black";
-    ctx.font = "bold 50px Arial";
+    ctx.font = "bold 25px Arial";
     ctx.textAlign = "center";
-    ctx.fillText(number, x + 50, y + 70);
+    ctx.fillText(number, x + 25, y + 35);
 
-    const iconSize = 116;
+    const iconSize = 58;
     const iconX = x + width / 2 - iconSize / 2;
-    const iconY = y + 52;
+    const iconY = y + 26;
 
     ctx.fillStyle = "black";
     ctx.fillRect(iconX, iconY, iconSize, iconSize);
 
     ctx.fillStyle = "white";
-    ctx.font = "bold 60px Arial";
-    ctx.fillText(upgrade.symbol, x + width / 2, iconY + 78);
+    ctx.font = "bold 30px Arial";
+    ctx.fillText(upgrade.symbol, x + width / 2, iconY + 39);
 
     ctx.fillStyle = "black";
-    ctx.font = "bold 44px Arial";
-    ctx.fillText(upgrade.name, x + width / 2, y + 236);
+    ctx.font = "bold 22px Arial";
+    ctx.fillText(upgrade.name, x + width / 2, y + 118);
 
-    ctx.font = "30px Arial";
-    wrapText(ctx, upgrade.description, x + width / 2, y + 292, width - 52, 38);
+    ctx.font = "15px Arial";
+    wrapText(ctx, upgrade.description, x + width / 2, y + 146, width - 26, 19);
 }
 
 export function drawGameOverScreen(ctx, canvas, elapsedTime, killCount) {
@@ -330,15 +326,15 @@ export function drawGameOverScreen(ctx, canvas, elapsedTime, killCount) {
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
 
-    ctx.font = "bold 110px Arial";
-    ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - 160);
+    ctx.font = "bold 55px Arial";
+    ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - 80);
 
-    ctx.font = "50px Arial";
-    ctx.fillText(`Time Survived: ${formatTime(elapsedTime)}`, canvas.width / 2, canvas.height / 2 - 40);
-    ctx.fillText(`Kill Count: ${killCount}`, canvas.width / 2, canvas.height / 2 + 40);
+    ctx.font = "25px Arial";
+    ctx.fillText(`Time Survived: ${formatTime(elapsedTime)}`, canvas.width / 2, canvas.height / 2 - 20);
+    ctx.fillText(`Kill Count: ${killCount}`, canvas.width / 2, canvas.height / 2 + 20);
 
-    ctx.font = "40px Arial";
-    ctx.fillText("Press Space to Restart", canvas.width / 2, canvas.height / 2 + 150);
+    ctx.font = "20px Arial";
+    ctx.fillText("Press Space to Restart", canvas.width / 2, canvas.height / 2 + 75);
 }
 
 export function drawWinScreen(ctx, canvas, elapsedTime, killCount) {
@@ -348,15 +344,15 @@ export function drawWinScreen(ctx, canvas, elapsedTime, killCount) {
     ctx.fillStyle = "black";
     ctx.textAlign = "center";
     
-    ctx.font = "bold 110px Arial";
-    ctx.fillText("You Win!", canvas.width / 2, canvas.height / 2 - 160);
+    ctx.font = "bold 55px Arial";
+    ctx.fillText("You Win!", canvas.width / 2, canvas.height / 2 - 80);
 
-    ctx.font = "50px Arial";
-    ctx.fillText(`Time: ${formatTime(elapsedTime)}`, canvas.width / 2, canvas.height / 2 - 40);
-    ctx.fillText(`Kill Count: ${killCount}`, canvas.width / 2, canvas.height / 2 + 40);
+    ctx.font = "25px Arial";
+    ctx.fillText(`Time: ${formatTime(elapsedTime)}`, canvas.width / 2, canvas.height / 2 - 20);
+    ctx.fillText(`Kill Count: ${killCount}`, canvas.width / 2, canvas.height / 2 + 20);
 
-    ctx.font = "40px Arial";
-    ctx.fillText("Press Space to Restart", canvas.width / 2, canvas.height / 2 + 150);
+    ctx.font = "20px Arial";
+    ctx.fillText("Press Space to Restart", canvas.width / 2, canvas.height / 2 + 75);
 }
 
 export function drawHowToPlayScreen(ctx, canvas) {
@@ -366,16 +362,16 @@ export function drawHowToPlayScreen(ctx, canvas) {
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
 
-    ctx.font = "bold 150px Arial";
-    ctx.fillText("How to Play?", canvas.width / 2, 180);
+    ctx.font = "bold 75px Arial";
+    ctx.fillText("How to Play?", canvas.width / 2, 90);
 
     ctx.textAlign = "center";
 
     const startX = canvas.width / 2;
-    let startY = 320;
-    const lineHeight = 55;
+    let startY = 160;
+    const lineHeight = 28;
 
-    ctx.font = "40px Arial";
+    ctx.font = "20px Arial";
     startY += lineHeight;
     ctx.fillText("Defeat enemies to gain XP orbs", startX, startY);
 
@@ -385,21 +381,21 @@ export function drawHowToPlayScreen(ctx, canvas) {
     startY += lineHeight;
     ctx.fillText("Defeat the Boss to win", startX, startY);
 
-    startY += lineHeight + 100;
+    startY += lineHeight + 50;
 
-    ctx.font = "bold 55px Arial";
+    ctx.font = "bold 28px Arial";
     ctx.fillText("Controls", startX, startY);
 
     ctx.textAlign = "left"
 
-    ctx.font = "40px Arial";
+    ctx.font = "20px Arial";
     startY += lineHeight;
-    ctx.fillText("• Move: W/A/S/D or Arrow Keys", startX - 300, startY);
+    ctx.fillText("• Move: W/A/S/D or Arrow Keys", startX - 150, startY);
 
     startY += lineHeight;
-    ctx.fillText("• Upgrade Select: 1/2/3", startX - 300, startY);
+    ctx.fillText("• Upgrade Select: 1/2/3", startX - 150, startY);
 
     startY += lineHeight;
-    ctx.fillText("• Pause / Return: Esc", startX - 300, startY);
+    ctx.fillText("• Pause / Return: Esc", startX - 150, startY);
     
 }

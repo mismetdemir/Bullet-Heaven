@@ -11,6 +11,9 @@ import { playSound } from "./audio.js";
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
+const backgroundTile = new Image();
+backgroundTile.src = "assets/images/background-tile.png";
+
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -126,14 +129,25 @@ function update(deltaTime) {
 function drawGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = "#1a1a1a";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+    drawBackground(ctx, canvas);
     drawXPOrbs(ctx);
     drawBullets(ctx);
-    drawPlayer(ctx, player);
     drawEnemies(ctx);
+    drawPlayer(ctx, player);
     drawHUD(ctx, canvas, player, game.elapsedTime);
+}
+
+function drawBackground(ctx, canvas) {
+    if (!backgroundTile.complete || backgroundTile.naturalWidth === 0) {
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        return;
+    }
+
+    const pattern = ctx.createPattern(backgroundTile, "repeat");
+
+    ctx.fillStyle = pattern;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function chooseUpgrade(index) {
