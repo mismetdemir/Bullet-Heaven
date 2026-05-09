@@ -1,5 +1,6 @@
 import { isColliding } from "./utils.js";
 import { createXPOrb } from "./xp.js";
+import { playSound } from "./audio.js";
 
 export const bullets = [];
 
@@ -12,6 +13,7 @@ export function updatePlayerFiring(player, deltaTime) {
 
     if (player.fireTimer >= player.fireInterval) {
         fireBullets(player);
+        playSound("fire");
         player.fireTimer = 0;
     }
 }

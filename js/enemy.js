@@ -1,5 +1,6 @@
 import { normalizeVector, getRadius, getCenter, isColliding } from "./utils.js";
- 
+import { playSound } from "./audio.js";
+
 export const enemies = [];
 
 let enemySpawnTimer = 0;
@@ -246,6 +247,7 @@ function moveBoss(boss, player, deltaTime) {
         if (boss.dashChargeTimer <= 0) {
             boss.dashState = "dashing";
             boss.dashTimer = boss.dashDuration;
+            playSound("bossDash");
         }
     } else if (boss.dashState === "dashing") {
         boss.x += boss.dashDirectionX * boss.dashSpeed * deltaTime;

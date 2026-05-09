@@ -6,6 +6,7 @@ import { drawStartScreen, getStartButtons, drawPauseScreen, drawLevelUpScreen,
 import { getUpgradeOptions, applyUpgrade } from "./upgrade.js";
 import { resetBullets, updatePlayerFiring, updateBullets, handleBulletCollisions, drawBullets } from "./bullet.js";
 import { resetXP, updateXPOrbs, drawXPOrbs } from "./xp.js";
+import { playSound } from "./audio.js";
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -104,6 +105,7 @@ function update(deltaTime) {
 
     if (result.bossKilled) {
         currentState = GAME_STATE.WIN;
+        playSound("win");
         return;
     }
 
@@ -112,10 +114,12 @@ function update(deltaTime) {
     if (leveledUp) {
         game.upgradeOptions = getUpgradeOptions(player);
         currentState = GAME_STATE.LEVEL_UP;
+        playSound("levelUp");
     }
 
     if (player.health <= 0) {
         currentState = GAME_STATE.GAME_OVER;
+        playSound("gameOver");
     }
 }
 
