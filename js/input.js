@@ -16,10 +16,10 @@ const consumableKeys = {
 document.addEventListener("keydown", (event) => {
     const key = event.key.toLowerCase();
 
-    if (key === "w") keys.up = true;
-    if (key === "s") keys.down = true;
-    if (key === "a") keys.left = true;
-    if (key === "d") keys.right = true;
+    if (key === "w" || key === "arrowup") keys.up = true;
+    if (key === "s" || key === "arrowdown") keys.down = true;
+    if (key === "a" || key === "arrowleft") keys.left = true;
+    if (key === "d" || key === "arrowright") keys.right = true;
 
     if (!event.repeat) {
         if (event.code === "Space") consumableKeys.space = true;
@@ -33,10 +33,10 @@ document.addEventListener("keydown", (event) => {
 document.addEventListener("keyup", (event) => {
     const key = event.key.toLowerCase();
 
-    if (key === "w") keys.up = false;
-    if (key === "s") keys.down = false;
-    if (key === "a") keys.left = false;
-    if (key === "d") keys.right = false;
+    if (key === "w" || key === "arrowup") keys.up = false;
+    if (key === "s" || key === "arrowdown") keys.down = false;
+    if (key === "a" || key === "arrowleft") keys.left = false;
+    if (key === "d" || key === "arrowright") keys.right = false;
 });
 
 export function consumeKey(key) {
